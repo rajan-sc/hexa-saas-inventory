@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-forest-ink: #0f3e17;
+  --color-sage-wash: #b1dbb8;
+  --color-mist-blue: #b6ced5;
+  --color-mint-veil: #cfe7d3;
+  --color-linen: #e1f4df;
+  --color-linen-white: #fffefc;
+  --color-hairline-gray: #e5e7eb;
+  --color-charcoal: #222222;
+  --color-graphite: #333333;
+  --color-true-black: #000000;
+}
+
+@layer base {
+  *, *::before, *::after {
+    border-color: var(--color-hairline-gray);
+  }
+
+  body {
+    background-color: var(--color-linen-white);
+    color: var(--color-true-black);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: var(--color-forest-ink);
+  }
+}
+
+@layer components {
+  /* Smart Care Button Styles */
+  .btn-primary {
+    @apply inline-flex items-center justify-center bg-forest-ink text-linen-white 
+           rounded-buttons px-5 py-2.5 text-sm font-medium transition hover:opacity-95 
+           active:scale-[0.99] disabled:opacity-50 cursor-pointer;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center bg-linen text-forest-ink border border-sage-wash/60
+           rounded-buttons px-5 py-2.5 text-sm font-medium transition hover:bg-sage-wash/40 
+           active:scale-[0.99] disabled:opacity-50 cursor-pointer;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center text-charcoal hover:bg-slate-100 
+           rounded-nav px-3 py-1.5 text-xs font-medium transition cursor-pointer;
+  }
+
+  /* Smart Care Card Style */
+  .sc-card {
+    @apply bg-white rounded-cards border border-hairline-gray p-6 transition;
+  }
+
+  /* Smart Care Badge */
+  .sc-badge {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-badges text-xs font-medium;
+  }
+}
+
