@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id                        String     @id @default(cuid())
+  name                      String
+  defaultLowStockThreshold  Int        @default(5)
+  createdAt                 DateTime   @default(now())
+  updatedAt                 DateTime   @updatedAt
+
+  users                     User[]
+  products                  Product[]
+  stockLogs                 StockLog[]
+
+  @@map("organizations")
+}
+
+model User {
+  id              String        @id @default(cuid())
+  email           String        @unique
+  passwordHash    String
+  role            String        @default("OWNER")
+  organizationId  String
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  stockLogs       StockLog[]
+
+  @@index([organizationId])
+  @@map("users")
+}
+
+model Product {
+  id                  String        @id @default(cuid())
+  organizationId      String
+  organization        Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  name                String
+  sku                 String
+  description         String?
+  quantityOnHand      Int           @default(0)
+  costPrice           Float?
+  sellingPrice        Float?
+  lowStockThreshold   Int?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  stockLogs           StockLog[]
+
+  // Multi-tenancy uniqueness: SKU must be unique strictly per organization
+  @@unique([organizationId, sku])
+  @@index([organizationId])
+  @@index([organizationId, name])
+  @@map("products")
+}
+
+model StockLog {
+  id              String        @id @default(cuid())
+  organizationId  String
+  organization    Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  productId       String
+  product         Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
+  delta           Int           // +/- adjustment quantity
+  quantityAfter   Int           // resultant quantity
+  note            String?       // optional reason
+  createdByUserId String?
+  createdByUser   User?         @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdAt       DateTime      @default(now())
+
+  @@index([organizationId, productId])
+  @@map("stock_logs")
+}
+
